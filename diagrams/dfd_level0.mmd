@@ -1,0 +1,13 @@
+flowchart LR
+    CAM[/"Camera / RTSP Source"/]
+    OPR[/"Security Operator"/]
+    ADM[/"Administrator"/]
+    NOT[/"Notification Service<br/>(Email / SMS / Push)"/]
+    SYS(("0<br/>AI Object Detection<br/>&amp; Analytics System"))
+
+    CAM -- "Raw video stream (RTSP, H.264)" --> SYS
+    ADM -- "Config, thresholds, enrollment images" --> SYS
+    OPR -- "Alert acknowledgements, queries" --> SYS
+    SYS -- "Live annotated view, alert dashboard" --> OPR
+    SYS -- "Attendance and analytics reports" --> ADM
+    SYS -- "Alert messages" --> NOT

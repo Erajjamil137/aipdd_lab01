@@ -1,0 +1,36 @@
+digraph L1 {
+  rankdir=TB; dpi=200; nodesep=0.55; ranksep=1.0; splines=true; bgcolor=white; newrank=true;
+  node [fontname="DejaVu Sans", fontsize=11];
+  edge [fontname="DejaVu Sans", fontsize=9];
+  CAM [label="Camera /\nRTSP Source", shape=box, style=filled, fillcolor="#FFF2CC", penwidth=1.5];
+  ADM [label="Administrator", shape=box, style=filled, fillcolor="#FFF2CC", penwidth=1.5];
+  OPR [label="Security\nOperator", shape=box, style=filled, fillcolor="#FFF2CC", penwidth=1.5];
+  NOT [label="Notification\nService", shape=box, style=filled, fillcolor="#FFF2CC", penwidth=1.5];
+  node [shape=circle, style=filled, fillcolor="#DAE8FC", penwidth=2, width=1.35, fixedsize=true];
+  P1 [label="1.0\nIngest\nVideo"]; P2 [label="2.0\nPreprocess\nFrames"];
+  P3 [label="3.0\nRun Model\nInference"]; P4 [label="4.0\nPost-process\nDetections"];
+  P5 [label="5.0\nLog & Raise\nAlerts"];
+  node [shape=none, style="", fixedsize=false, width=0.5, margin=0];
+  D1 [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" BGCOLOR="#D5E8D4"><TR><TD SIDES="TB" BORDER="2">D1 &nbsp;Model Store<BR/>(weights, labels)</TD></TR></TABLE>>];
+  D2 [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" BGCOLOR="#D5E8D4"><TR><TD SIDES="TB" BORDER="2">D2 &nbsp;Config &amp;<BR/>Identity Store</TD></TR></TABLE>>];
+  D3 [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" BGCOLOR="#D5E8D4"><TR><TD SIDES="TB" BORDER="2">D3 &nbsp;Detection &amp;<BR/>Event Log DB</TD></TR></TABLE>>];
+  {rank=same; P1; P2; P3; P4; P5;}
+  {rank=same; CAM; ADM; D2; D1;}
+  {rank=same; D3; OPR; NOT;}
+  P1 -> P2 -> P3 -> P4 -> P5 [style=invis];
+  D1 -> D2 -> CAM -> ADM [style=invis];
+  OPR -> NOT -> D3 [style=invis];
+  CAM -> P1 [label="Raw video stream"];
+  P1 -> P2 [constraint=false,label="Decoded frames\n+ timestamps"];
+  D2 -> P2 [label="Resize / normalise\nparams"];
+  P2 -> P3 [constraint=false,label="Preprocessed\ntensors"];
+  D1 -> P3 [label="Model weights"];
+  P3 -> P4 [constraint=false,label="Raw predictions"];
+  D2 -> P4 [label="Thresholds, NMS,\nidentities"];
+  P4 -> P5 [constraint=false,label="Filtered detections\n(bbox, class, conf)"];
+  P5 -> D3 [label="Detection records,\nlog entries"];
+  P5 -> NOT [label="Alert messages"];
+  P5 -> OPR [label="Annotated frames,\nalerts"];
+  ADM -> D2 [constraint=false,label="Config updates,\nenrollment"];
+  D3 -> ADM [constraint=false,label="Attendance & analytics\nreports"];
+}

@@ -1,0 +1,29 @@
+flowchart LR
+    CAM[/"Camera / RTSP Source"/]
+    OPR[/"Security Operator"/]
+    ADM[/"Administrator"/]
+    NOT[/"Notification Service"/]
+
+    P1(("1.0<br/>Ingest<br/>Video"))
+    P2(("2.0<br/>Preprocess<br/>Frames"))
+    P3(("3.0<br/>Run Model<br/>Inference"))
+    P4(("4.0<br/>Post-process<br/>Detections"))
+    P5(("5.0<br/>Log &amp; Raise<br/>Alerts"))
+
+    D1[("D1 Model Store<br/>(weights, labels)")]
+    D2[("D2 Config &amp;<br/>Identity Store")]
+    D3[("D3 Detection &amp;<br/>Event Log DB")]
+
+    CAM -- "Raw video stream" --> P1
+    P1 -- "Decoded frames + timestamps" --> P2
+    D2 -- "Resize / normalise params" --> P2
+    P2 -- "Preprocessed tensors" --> P3
+    D1 -- "Model weights" --> P3
+    P3 -- "Raw predictions" --> P4
+    D2 -- "Thresholds, NMS params, identities" --> P4
+    P4 -- "Filtered detections (bbox, class, conf)" --> P5
+    P5 -- "Detection records, log entries" --> D3
+    P5 -- "Alert messages" --> NOT
+    P5 -- "Annotated frames, alerts" --> OPR
+    ADM -- "Config updates, enrollment" --> D2
+    D3 -- "Attendance and analytics reports" --> ADM

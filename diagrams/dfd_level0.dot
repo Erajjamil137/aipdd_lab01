@@ -1,0 +1,16 @@
+digraph L0 {
+  rankdir=LR; dpi=200; nodesep=0.7; ranksep=1.6; bgcolor=white;
+  node [fontname="DejaVu Sans", fontsize=12];
+  edge [fontname="DejaVu Sans", fontsize=10];
+  CAM [label="Camera /\nRTSP Source", shape=box, style=filled, fillcolor="#FFF2CC", penwidth=1.5];
+  ADM [label="Administrator", shape=box, style=filled, fillcolor="#FFF2CC", penwidth=1.5];
+  OPR [label="Security\nOperator", shape=box, style=filled, fillcolor="#FFF2CC", penwidth=1.5];
+  NOT [label="Notification Service\n(Email / SMS / Push)", shape=box, style=filled, fillcolor="#FFF2CC", penwidth=1.5];
+  SYS [label="0\nAI Object Detection\n& Analytics System", shape=circle, style=filled, fillcolor="#DAE8FC", penwidth=2, width=2.4, fixedsize=true];
+  CAM -> SYS [label="Raw video stream\n(RTSP, H.264)"];
+  ADM -> SYS [label="Config, thresholds,\nenrollment images"];
+  OPR -> SYS [label="Alert acknowledgements,\nqueries"];
+  SYS -> OPR [label="Live annotated view,\nalert dashboard"];
+  SYS -> ADM [label="Attendance &\nanalytics reports"];
+  SYS -> NOT [label="Alert messages"];
+}
